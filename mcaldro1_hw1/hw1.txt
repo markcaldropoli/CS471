@@ -1,0 +1,257 @@
+MARK CALDROPOLI
+Homework Assignment 1
+Programming Languages
+CS471, Fall 2019
+Due: Tues Sept 3 9pm
+Purpose: To examine the basic notions of programming languages via a review of C and gentle use of scripting language Python. 
+Links for References and Software
+Read Scott: Chapter 1 and review CYU 1-29. Chapter 2.1
+
+Instructions: Requirements for submission of homework
+Assignment
+Problem 1:
+Consider the following C program program with multiple errors as indicated:
+
+#include <stdio.h>
+char 9a, b2; // error
+INT ar[10];  // error
+long fr; nx; //error
+int * p;
+
+int main (void){
+      int auto ;  //error
+      int x;
+      ar[1] = x;
+      *p = 10; 
+      suto = chg(x); //error
+      return auto; //error 
+}
+int chg(long  fr)  {
+     if (fr = 0) {  //error
+          x = 10; //error 
+          ar[10] = 10; //error
+        } else {
+             ar[1] = 1;
+        }
+    return ar[1];
+}
+     
+Label each error as either: lexical, syntactical, static semantic, dynamic semantic, uncheckable error or logical error. 
+To compile type:
+gcc -Wall -std=c11 <filename>.c
+
+YOU NEED TO JUSTIFY YOUR ANSWER IN 1 OR 2 SENTENCES.  Some errors maybe compounded.
+Problem 1 Answer:
+
+See powerpoint slides.
+
+Problem 2:
+Download and compile powI.c to assembly code on your machine: Use the command:
+gcc -S -std=c11 powI.c
+
+Although C is considered a high-level language it really is only a few steps up from assembly. You should be able to recognize a simple correspondence between the C code and the compiled assembly code. Annotate the generated assembly code (you may copy and paste it in this file and annotate by line): Look for the key points, there is no need to label each instruction.
+
+In particular, you should recognize and label the following:
+1. The creation of the stack frame.
+2. Argument storage and updates.
+3. Local variable storage and updates.
+4. Translation of the loop.
+5. Some form of return result, and an exit from the function.
+Problem 2 Answer:
+
+See powerpoint slides.
+
+Problem 3:
+Download and compile pow_full.c: Use the command:
+   gcc -Wall pow_full.c -o pow 
+(it's always a good idea to compile with -Wall). You may run it with any integer input, for example:
+  ./pow 3 4
+
+The function powI is obviously an iterative implementation of an integer power function.
+
+1. Add a new function, powF, that implements integer power using a functional style: You should recursively call powF and use no loops. Adjust the main function to call powF instead.
+
+2. Briefly discuss the computation complexity of both implementations of power (big-oh notation); one sentence will do.
+3. In a language where you have the flexibility to implement an algorithm iteratively and recursively why would you choose one over the other? 
+Problem 3 Answer:
+
+See powerpoint slides.
+
+Problem 4:
+Statically typed languages have their advantages, but sometimes it really is simpler to use a dynamically typed language. 
+The following is a simple implementation of factorial in Python: fact.py
+
+#! /usr/bin/env python
+import sys
+
+def fact(n):
+  if n == 0:
+    return 1
+  else:
+    return n * fact(n-1)
+
+if len(sys.argv) != 2:
+  print("%s usage: [NUMBER]" % sys.argv[0])
+  exit()
+
+print(fact(int(sys.argv[1])))
+
+Rewrite powI and powF from pow_full.c in Python.
+
+In particular: Create a file named pow_full.py that contains an implementation of powI and powF in Python.
+Make sure to place the code in this file as well.
+Problem 4 Answer:
+
+See pow_full.py (powI also in powI.py)
+
+Problem 5:
+Name three languages in each of the following categories: von Neumann, functional, object oriented.  Name two logic languages. Name two widely used concurrent languages.
+Problem 5 Answer:
+
+von Neumann - Java, C, Fortran 
+functional - C#, Haskell, Lisp
+object oriented - Java, Ruby, Python
+concurrent - Java, Scala
+
+Problem 6:
+What kind of behavior in C is said to be undefined? 
+Problem 6 Answer:
+
+Undefined behavior in C consists of unambiguous bugs such as attempting to index an array outside of its bounds, integer division by zero, or modifying a string literal.
+
+Problem 7:
+What is the difference between undefined behavior vs unspecified behavior in C++? 
+Problem 7 Answer:
+
+Undefined behavior occurs when the translator makes assumptions about the code that are unsatisfied and not within the language specification. For example, integer division by zero or attempting to index an array outside of its bounds. Unspecified behavior occurs when code interpretation varies between different implementations of C++. An example of this is the order of evaluations of subexpressions.
+
+Source: Wikipedia - (Undefined Behavior, Unspecified Behavior)
+
+Problem 8:
+Page 38 - exercise 1.1
+1.1 Errors in a computer program can be classified according to when they are detected and, if they are detected at compile time, what part of the compiler detects them. Using your favorite imperative language, give an example of each of the following.
+(a) A lexical error, detected by the scanner
+(b) A syntax error, detected by the parser
+(c) A static semantic error, detected by semantic analysis
+(d) A dynamic semantic error, detected by code generated by the compiler
+(e) An error that the compiler can neither catch nor easily generate code to catch (this should be a violation of the language definition, not just a program bug)
+Problem 8 Answer:
+
+(a) int 6newInt = 6;
+(b) x *= 3 * (2
+(c) double newDouble = "double";
+(d) double[5] array;
+    array[5] = 2;
+(e) double array1[5]; double array2[5];
+    array[5] = 2;
+
+Problem 9:
+Page 38 exercise 1.7.  
+In your local implementation of C, what is the limit on the size of integers? (You can use /usr/include/limits.h to figure out the range of values of type int.)
+What happens in the event of arithmetic overflow?
+What are the implications of size limits on the portability of programs from one machine/compiler to another?
+How do the answers to these questions differ for Java? for Python? for Haskell?
+Problem 9 Answer:
+1.5 Answer
+                                 program
+                                    |
+                                 __ :=  _____
+                               /      \      \
+                            (5)     call    :=
+                             |       |       |
+                             12      3      _|_  _______
+                                           /    \       \
+                                         (6)    call    while
+                                          |        |       |
+                                          8       (3)     _| __ __________________
+                                                        /      \                   \
+                                                       !=       if                 call
+                                                      /   \      | \   \           /  \
+                                                     (5)  (6)   _ >  :=  :=  __   (4)  (5)
+                                                      |    |   /  \   | \   \  \
+                                                      12   8  (5) (6) (5) - (6) - __
+                                                               |   |     / \    |   \
+                                                               12  8    (5) (6) (5) (6)
+
+1.7 Answer
+
+2147483647
+
+Arithmetic overflow occurs when any defined variable exceeds the variable's range. When this occurs, the interpreted value wraps around the maximum value and starts over from the minimum value. For example, when adding one to the max integer value, 2147483647, the value obtained is -2147483648.
+
+Machines perform arithmetic operations through registers which have specific bit lengths for instructions and memory. As a result of this, code written for a particular operating system may not execute correctly on a machine with different architecture.
+
+Java provides exceptions to handle arithmetic overflows using pre-defined classes. Python has arbitrary precision which means that the data types are only limited in size by the memory of the machine. Haskell also has exceptions. These are different from Java in that it doesn't have special syntax.
+
+Problem 10:
+Operator precedence and associativity are often subtle details that are overlooked when using a language (and require careful treatment when implementing a compiler). One way around this issue is to use prefix or postfix notation. This is not as foreign as you think, every function call is in prefix notation: 2 powI 3 is just as valid as + 2 3.
+Rewrite the expressions a–d below in prefix notation. Assume the following precedences and associativities for the operators:
+Binary     Precedence       Associativity
+Operator   (3 highest)
+^               3               left
+-               2               left
+*               1               left
++               1               right
+
+The algorithm for rewriting is very straight forward: 
+Parenthesize the expression fully, using the rules of precedence and associativity.
+Within each parenthesized sub-expression, move the operator to left of its left operand.
+Remove the parentheses.
+
+The operands will have the same order in the resulting expressions (due to the restriction that the operators are NOT commutative).
+a) w + x ^ y ^ z 
+b) w + x + y ^ z
+c) w * x * y ^ z
+d) w + x - y + z
+Problem 10 Answer:
+a)
+w + ((x ^ y) ^ z)
++ w (^ (^ x y) z)
++ w ^ ^ x y z
+b)
+w + (x + (y ^ z))
++ w (+ x (^ y z))
++ w + x ^ y z
+c)
+(w * x) * (y ^ z)
+* (* w x) (^ y z)
+* * w x ^ y z
+d)
+w + ((x - y) + z)
++ w (+ (- x y) z)
++ w + - x y z
+
+Problem 11:
+Repeat Problem 10, but use postfix notation instead.
+Problem 11 Answer:
+a)
+w + ((x ^ y) ^ z)
+w ((x y ^) z ^) +
+w x y ^ z ^ +
+b)
+w + (x + (y ^ z))
+w (x (y z ^) +) +
+w x y z ^ + +
+c)
+(w * x) * (y ^ z)
+(w x *) (y z ^) *
+w x * y z ^ *
+d)
+w + ((x - y) + z)
+w ((x y -) z +) +
+w x y - z + +
+
+Problem 12:
+True or False. Some programming languages are more "powerful" then others. Explain your answer.
+Problem 12 Answer:
+
+True because many languages have benefits that make them more powerful than others for specific tasks. For example, SQL is powerful because it is good for creating and managing large databases and C is powerful because it is a low level language that provides access to hardware. Some languages are designed to handle certain tasks which makes them powerful for completing those functions in comparison to other languages.
+
+Problem 13:
+What is the difference between syntax and semantics?
+Problem 13 Answer:
+
+Syntax of a programming language is the form of its expression, statements, and program units. Semantics is the meaning of the expressions, statements, and program units.
+
+Source: Class Notes (http://bingweb.binghamton.edu/~head/CS471/NOTES/GRAMMAR/4Fall01.html)
+
