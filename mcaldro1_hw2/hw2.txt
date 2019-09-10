@@ -1,0 +1,393 @@
+MARK CALDROPOLI
+Homework Assignment 2
+Programming Languages
+CS471, Fall 2019
+Due Tuesday, Sept. 10, 2019
+
+General submission instructions can be found at http://bingweb.binghamton.edu/~head/CS471/requirements.html
+Read Chapter 2 - Pages 43 to 56, page 67 (2.2.5) pages 69. 73-78  (2.3.1)
+Do CYU chapter 1 - 9, 16-19, 20,27,29,30
+Homework 2
+Code
+You'll need the following files to complete the assignment:
+Makefile
+arith1.c
+arith2.c
+Problem 1:
+Examine arith1.c: It contains an implementation of a simple arithmatic calculator. The following will compile and run a few test cases.
+
+make arith1
+./arith1
+1 + 2 + 3
+./arith1
+1 + 2 * 3
+
+The arith1 language is parsed used a recursive-descent parser: It is fairly straightforward to determine the language's grammar from the parser.
+
+In particular:
+(1) Using the code, give the complete grammar in BNF form
+(2) Is the grammar left or right recursive? How does that affect the associativity of plus and mult?
+
+Problem 1 Answer:
+
+<command> := <expr> \n
+<expr> := <term> | <term> + <expr>
+<term> := <factor> | <factor> * <term>
+<factor> := ( <expr> ) | <number>
+<number> := <digit> <number> | <digit>
+<digit> := 0|1|2|3|4|5|6|7|8|9
+
+Problem 2:
+Using the grammar you extracted in Problem 1 add two new operators, average, "@", and minus, "-" , operators to the arith1 language. The "-" should have the a higher precedence than "+" and lower precedence than "*". The average operator, "@", should have the higher precedence than "*" but still be able to be overridden using parentheses as defined by the grammar. Both operators should have the same associativity as plus and times. The average operator should compute the average of its two operands, i.e (a @ b) = ((a+b)/2).
+Give the modified grammar.
+Problem 2 Answer:
+
+<command> := <expr> \n
+<expr> := <minus> | <minus> + <expr>
+<minus> := <term> | <term> - <minus>
+<term> := <avg> | <avg> * <term>
+<avg> := <factor> | <factor> @ <avg>
+<factor> := ( <expr> ) | <number>
+<number> := <digit> <number> | <digit>
+<digit> := 0|1|2|3|4|5|6|7|8|9
+
+Problem 3:
+Write the left derivation for the following expressions according to the modified grammar from Problem 2 -- It may help to draw the parse tree first.
+    a. 1 + 2 - 2
+    b. 2 - 3 * 5
+    c. 10 - 5 @ 2
+    d. 10 - 7 - 2
+NOTE: You should show only one step at a time -- as we did in class -- but may jump from number to the actual terminal number.
+For example:
+number '+' expr
+'10' '+' expr
+
+Problem 3 Answer:
+
+a.  1 + 2 - 2
+    <command>
+    <expr> \n
+    <minus> + <expr> \n
+    <term> + <expr> \n
+    <avg> + <expr> \n
+    <factor> + <expr> \n
+    <number> + <expr> \n
+    1 + <expr> \n
+    1 + <minus> \n
+    1 + <term> - <minus> \n
+    1 + <avg> - <minus> \n
+    1 + <factor> - <minus> \n
+    1 + <number> - <minus> \n
+    1 + 2 - <minus> \n
+    1 + 2 - <term> \n
+    1 + 2 - <avg> \n
+    1 + 2 - <factor> \n
+    1 + 2 - <number> \n
+    1 + 2 - 2 \n
+
+b.  2 - 3 * 5
+    <command>
+    <expr> \n
+    <minus> \n
+    <term> - <minus> \n
+    <avg> - <minus> \n
+    <factor> - <minus> \n
+    <number> - <minus> \n
+    2 - <minus> \n
+    2 - <term> \n
+    2 - <avg> * <term> \n
+    2 - <factor> * <term> \n
+    2 - <number> * <term> \n
+    2 - 3 * <term> \n
+    2 - 3 * <avg> \n
+    2 - 3 * <factor> \n
+    2 - 3 * <number> \n
+    2 - 3 * 5 \n
+
+c.  10 - 5 @ 2
+    <command>
+    <expr> \n
+    <minus> \n
+    <term> - <minus> \n
+    <avg> - <minus> \n
+    <factor> - <minus> \n
+    <number> - <minus> \n
+    10 - <minus> \n
+    10 - <term> \n
+    10 - <avg> \n
+    10 - <factor> @ <avg> \n
+    10 - <number> @ <avg> \n
+    10 - 5 @ <avg> \n
+    10 - 5 @ <factor> \n
+    10 - 5 @ <number> \n
+    10 - 5 @ 2 \n
+
+d.  10 - 7 - 2
+    <command>
+    <expr> \n
+    <minus> \n
+    <term> - <minus> \n
+    <avg> - <minus> \n
+    <factor> - <minus> \n
+    <number> - <minus> \n
+    10 - <minus> \n
+    10 - <term> - <minus> \n
+    10 - <avg> - <minus> \n
+    10 - <factor> - <minus> \n
+    10 - <number> - <minus> \n
+    10 - 7 - <minus> \n
+    10 - 7 - <term> \n
+    10 - 7 - <avg> \n
+    10 - 7 - <factor> \n
+    10 - 7 - <number> \n
+    10 - 7 - 2 \n
+
+Problem 4:
+Modify arith1.c and add the new operators (both - and @) that you defined in Problem 2. Pay careful attention to the pattern between the original grammar and the associated function calls in arith1.c. If you have properly adjusted the grammar, it should be a straightforward modification of the original functions with the additional of a couple new function for the new operators. 
+
+You should pay careful attention to how expressions evaluate; a compile and a correct evaluation of some expressions does not mean you have modified everything correctly. Try the sample cases below. 
+
+./arith
+1 + 2 - 2
+The result is: 1
+
+./arith
+2 - 3 * 5
+The result is: -13
+
+./arith
+5 @ 2
+The result is: 3
+
+./arith
+10 - 7 - 2
+The result is: 5
+
+./arith
+10 - 5 @ 2
+The result is: 7
+
+Problem 4 Answer:
+
+See arith1.c for the new operators.
+
+Problem 5:
+Examine arith2.c: It contains another implementation of a simple arithmetic calculator. The following will compile and run a few test cases. 
+
+make arith2
+./arith2
+1 + 2 * 3
+./arith2
+1 + 2 + 3
+
+The arith2 language is parsed using a slightly different technique, although it is still considered a recursive-descent parser. Pay careful attention to the way while loops are used to parse, instead of pure recursion. Thinking in terms of EBNF (hint: kleene star) may help determine the difference from the previous grammar.
+
+In particular:
+(1) Using the code, give the complete grammar in BNF or EBNF form
+(2) Is the grammar left or right recursive? How does that affect the associativity of plus and mult?
+
+Problem 5 Answer:
+
+(1)
+    <command> := <expr> \n
+    <expr> := <term> {+ <term>}
+    <term> := <factor> {* <factor>}
+    <factor> := ( <expr> ) | <number>
+    <number> := <digit> <number> | <digit>
+    <digit> := 0|1|2|3|4|5|6|7|8|9
+
+(2) This grammar is left recursive. Mult has a higher precedence than plus.
+
+Problem 6:
+Using the grammar you extracted in Problem 5 add two new operators to the arith2 language. The first, minus, "-", should have higher precedence than plus, but lower precedence than mult. The second, average, "@", should have higher precedence than mult, but still be able to be overridden using parentheses as defined by the grammar. Both operators should have the same associativity as plus and times.
+Give the modified grammar.
+
+Problem 6 Answer:
+
+<command> := <expr> \n
+<expr> := <minus> {+ <minus>}
+<minus> := <term> {- <term>}
+<term> := <average> {* <average>}
+<average> := <factor> {@ <factor>}
+<factor> := ( <expr> ) | <number>
+<number> := <digit> <number> | <digit>
+<digit> := 0|1|2|3|4|5|6|7|8|9
+
+Problem 7:
+
+Write the left derivation for the following expressions according to the modified grammar from Problem 6. It may help to draw the parse tree first.
+    a. 1 + 2 - 2
+    b. 2 - 3 * 5
+    c. 10 - 5 @ 2
+    d. 10 - 7 - 2
+
+NOTE: You should show only one step at a time -- as we did in class -- but may jump from number to the actual terminal number.
+For example:
+number '+' expr
+'10' '+' expr
+
+Problem 7 Answer:
+
+a)  1 + 2 - 2
+    <command>
+    <expr> \n
+    <minus> + <minus> \n
+    <term> + <minus> \n
+    <average> + <minus> \n
+    <factor> + <minus> \n
+    <number> + <minus> \n
+    1 + <minus> \n
+    1 + <term> - <term> \n
+    1 + <average> - <term> \n
+    1 + <factor> - <term> \n
+    1 + <number> - <term> \n
+    1 + 2 - <term> \n
+    1 + 2 - <average> \n
+    1 + 2 - <factor> \n
+    1 + 2 - <number> \n
+    1 + 2 - 2 \n
+
+b)  2 - 3 * 5
+    <command>
+    <expr> \n
+    <minus> \n
+    <term> - <term> \n
+    <average> - <term> \n
+    <factor> - <term> \n
+    <number> - <term> \n
+    2 - <term> \n
+    2 - <average> * <average> \n
+    2 - <factor> * <average> \n
+    2 - <number> * <average> \n
+    2 - 3 * <average> \n
+    2 - 3 * <factor> \n
+    2 - 3 * <number> \n
+    2 - 3 * 5 \n
+
+c)  10 - 5 @ 2
+    <command>
+    <expr> \n
+    <minus> \n
+    <term> - <term> \n
+    <average> - <term> \n
+    <factor> - <term> \n
+    <number> - <term> \n
+    10 - <term> \n
+    10 - <average> \n
+    10 - <factor> @ <factor> \n
+    10 - <number> @ <factor> \n
+    10 - 5 @ <factor> \n
+    10 - 5 @ <number> \n
+    10 - 5 @ 2 \n
+
+d)  10 - 7 - 2
+    <command>
+    <expr> \n
+    <minus> \n
+    <term> - <term> - <term> \n
+    <average> - <term> - <term> \n
+    <factor> - <term> - <term> \n
+    <number> - <term> - <term> \n
+    10 - <term> - <term> \n
+    10 - <average> - <term> \n
+    10 - <factor> - <term> \n
+    10 - <number> - <term> \n
+    10 - 7 - <term> \n
+    10 - 7 - <average> \n
+    10 - 7 - <factor> \n
+    10 - 7 - <number> \n
+    10 - 7 - 2 \n
+
+Problem 8:
+
+Modify arith2.c and add the new operators that you defined in Problem 6. Pay careful attention to the pattern between the original grammar and the associated function calls in arith2.c. If you have properly adjusted the grammar, it should be a straight-forward modification of the original functions with the additional of a couple new functions for the new operators.
+
+You should pay careful attention to how expressions evaluate; a compile and a correct evaluation of some expressions does not mean you have modified everything correctly. Try the sample cases below.
+
+./arith
+1 + 2 - 2
+The result is:
+1
+
+./arith
+2 - 3 * 5
+The result is: -13
+
+./arith
+10 - 5 @ 2
+The result is:
+7
+
+./arith
+10 - 7 - 2
+The result is:
+1
+ 
+You DO NOT have to paste arith2.c in the template file, but you must submit the modified arith2.c file in the tarball that you will create for this assignment.
+
+Problem 8 Answer:
+
+See updated arith2.c file.
+
+Problem 9:
+Write regular expressions to match the following -- You should test your solutions using rubular.
+
+(1) C identifiers: A C identifier must start with an alpha character or an underscore, and may be followed by alphanumeric characters or the underscore.
+(2) Strings: A string must start and end with an double quote and may contain any character except the double quote itself; however, you may escape a double quote inside the string using \ -- i.e. "this is \" a string"
+(3) Strings over the alphabet {a,b} that contain an even number of b's.
+(4) Strings over the alphabet {a,b,c} that contain an odd number of c's.
+
+Samples:
+The following are acceptable strings for (3): abb, bab, bbaaa, ababa; the following should be rejected for (3): abbb, babb, bbabbb.
+
+The following are acceptable string for (4): cabab, ccaaabc, ccc; the following should be rejected for (4): cababc, ccaaab, bbabcc.
+
+NOTE: Rubular will feed the entire input at each character into the regex. If we have a regex aa* and give rubular the input "baa" it will match "aa". The entire string does not match however, which is correct and how you should view the regular expression. For example, if you were asked to write a regex that one or more a, and match "baa" on rubular then you have done something wrong.
+
+Problem 9 Answer:
+
+(1) ^[a-zA-Z_][\w]*$ 
+(2) ^"(?:\\"|[^"])*"$
+(3) ^((a*ba*ba*)|(a*))*$ 
+(4) ^([ab]*c[ab]*)([ab]*c[ab]*c)*$
+
+Problem 10:
+Both _Bool and bool are available in the ISO C standard published in 2011.  Briefly explain:
+(1) What are they used for?
+(2) Why do both exist?
+(3) Is one better than the other? Why?
+
+Problem 10 Answer:
+
+(1) _Bool and bool are both boolean types that are used to represent true/false. _Bool holds 0/1 and bool holds true/false which is a macro for 1/0.
+
+(2) _Bool has been a part of the C language since C99 standard when bool did not exist. bool now exists as a keyword. To maintain backwards compatibility, both are available in the language for programmers to use. Additionally, some programmers have been using bool as a variable name and to avoid naming conflicts, _Bool can be used as the type.
+
+(3) No, bool is an alias for _Bool so they have the exact same meaning.
+
+Source: https://www.quora.com/In-C-programming-what-is-the-difference-between-bool-and-_Bool
+
+Problem 11:
+Page 69 cyu 19:
+What are pragmas? Why are they processed by the scanner?  Briefly, if you are a language designer what are the trade offs of providing pragmas in a language?
+
+Problem 11 Answer:
+
+Pragmas provide directives or hints to the compiler. Pragmas that don't change program semantics are known as significant comments. Pragmas can appear anywhere in the source program. They are processed by the scanner because allowing them anywhere in the grammar would greatly complicate the parser. Pragmas can provide many benefits such as toggling run-time checks, code improvements, or performance profiling. On the other hand, pragmas can cross the line by changing program semantics.
+
+Problem 12:
+[Rosen,Discrete Mathematics and Its Applications 5th ed., pg 273 #48] "Consider the following inductive definition of a version of Ackermann's function. This function was named after Wilhelm Ackermann, a German mathematician who was a student of the great mathematician David Hilbert. Ackermann's function plays an important role in the theory of recursive functions and in the study of complexity of certain algorithms involving set unions." In the early days of imperative languages, Ackermann's function was used to measure the recursion capability of a compiler.
+
+The Ackermann Number N of the compiler as the largest N for which ack (3,N) gives an answer without a stack overflow. In earlier decades a variation had been used as one of the benchmarking algorithms. (There are several different variants of this function. All are called Ackermann's functions and their values do NOT have to agree!)  
+
+ack(m,n) = n + 1                   if m = 0
+ack(m,n) = ack(m-1, 1)             if n = 0 and m > 0 
+ack(m,n) = ack(m-1, ack(m, n-1))   if n > 0 and m > 0
+
+a) What is the value of ack(1,0)?
+b) What is the value of ack(0,3)?
+
+Problem 12 Answer:
+
+a) ack(1,0) = 2
+b) ack(0,3) = 4
