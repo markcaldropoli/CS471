@@ -361,7 +361,7 @@ Problem 10 Answer:
 
 (1) _Bool and bool are both boolean types that are used to represent true/false. _Bool holds 0/1 and bool holds true/false which is a macro for 1/0.
 
-(2) _Bool has been a part of the C language since C99 standard when bool did not exist. bool now exists as a keyword. To maintain backwards compatibility, both are available in the language for programmers to use. Additionally, some programmers have been using bool as a variable name and to avoid naming conflicts, _Bool can be used as the type.
+(2) _Bool has been a part of the C language since C99 standard when bool did not exist. bool now exists as a keyword. To maintain backward compatibility, both are available in the language for programmers to use. Additionally, some programmers have been using bool as a variable name and to avoid naming conflicts, _Bool can be used as the type.
 
 (3) No, bool is an alias for _Bool so they have the exact same meaning.
 
