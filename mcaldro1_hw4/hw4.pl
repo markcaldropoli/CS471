@@ -115,6 +115,15 @@ graphical tracer".
 	
 /* Problem 1 Answer: */
 
+/*
+ * A relation is a set of inputs and outputs.
+ * A function is a relation with one output for each input.
+ * Every function is a relation.
+ * Not every relation is a function.
+ * Ex. A relation of (X,Y) pairs - {(1,5), (8,4), (3,-2), (1,0), (6,-3)}
+ * is not a function because X = 1 maps to both Y = 5 and Y = 0.
+ */
+
 /* Problem 2:
    Define homoiconic.
    Is Prolog homoiconic?
@@ -126,6 +135,12 @@ graphical tracer".
 
 /* Problem 2 Answer: */
 
+ /*
+  * Homoiconic - Programs that look like ordinary data structures, and can be created, modified, and executed on the fly. (Source: Textbook pg.584)
+  * Yes, Prolog is homoiconic.
+  * Reflection is a language's ability to inspect and dynamically call every aspect of its structure at runtime.
+  * Yes, Prolog is fully reflective.
+  */
 
 /* Problem 3:
    Write a predicate prodlist(+List,?prod) which succeeds if prod is the total 
@@ -149,7 +164,6 @@ prodlist([X|Xs], Y) :- prodlist(Xs, Z), Y is X * Z.
 :- prodlist([], 0) -> fail ; true.
 :- prodlist([1,2,3,4],24).
 :- prodlist([0], 0).
-
 
 /* Problem 4:
    Write the predicate prodlist2(+List,?prod) which succeeds if prod is the prod 
@@ -286,7 +300,6 @@ swap(tree(X,Y),tree(YSwapped,XSwapped)) :- swap(X,XSwapped), swap(Y,YSwapped).
 :- swap(leaf(1), leaf(1)).
 :- swap(tree(leaf(1), leaf(2)), tree(leaf(1), leaf(2))) -> fail ; true.
 
-
 /* Problem 9:
    We will use a predicate edge(X,Y) to encode a graph.
    edge(X,Y) is true if there is a directed edge from X to Y.
@@ -323,8 +336,6 @@ incoming(X,Y) :- findall(Z,edge(Z,X),Y).
 :- outgoing(e,X), X = [a] -> fail ; true.
 :- incoming(e,X), X = [] -> fail ; true.
 
-
-
 /* Problem 10:
    Write a predicate computeS/4. computeS(Op, Arg1, Arg2, Result) succeeds if
    Result is the value after computing Arg1 Op Arg2. Use the insight you gained
@@ -353,13 +364,12 @@ computeS(Op, Arg1, Arg2, Result) :- X =.. [Op, Arg1, Arg2], Result is X.
 /* Problem 11 Answer: */
 
 result([],[]).
-result([X1|Y1],[X2|Y2]) :- X2 is X1, result([Y1],[Y2]).
+result([X1|Y1],[X2|Y2]) :- X2 is X1, result(Y1,Y2).
 
 /* Problem 11 Test */
 :- result([],[]).
-:- result([+(3,7),mod(104,7),-(5)],[10, 6, -5]).
-:- result([+(3,7),+(15, -(3,11))],X), X = [10, 7].
-
+:- result([+(3,7), mod(104,7),-(5)],[10, 6, -5]).
+:- result([+(3,7), +(15, -(3,11))],X), X = [10, 7].
 :- result([+(3,7), mod(104,7)],[10,13]) -> fail ; true.
 
 /* Problem 12:
@@ -383,7 +393,7 @@ result([X1|Y1],[X2|Y2]) :- X2 is X1, result([Y1],[Y2]).
 
 /* Problem 12 Answer: */
 
-d(x,x,1) :- !.
+d(x,x,1).
 d(C,x,0) :- number(C).
 d(C*x,x,C) :- number(C).
 d(-U,x,-R) :- d(U,x,R).
