@@ -1,0 +1,131 @@
+Cameron Viezel
+Jasper Suhr
+Mark Caldropoli
+
+1. Indicate the binding time (when the language is designed, when the program is linked, when the program begins execution, etc.) for each of the following decisions in your favorite programming language and implementation. Explain any answers you think are open to interpretation. 
+
+a) The number of built-in functions (math, type queries,etc.) 
+b) The variable declaration that corresponds to a particular variable reference (use) 
+c) The maximum length allowed for a constant (literal) character string 
+d) The referencing environment for a subroutine that is passed as a parameter 
+e) The address of a particular library routine 
+f) The total amount of space occupied by program code and data 
+
+1 Answer: (C++)
+
+a) C++ has some built-in functions defined by the language. Many other commonly-used functions are defined in the C++ standard library and can be imported and used as needed.
+b) Variables are bound to references at compile-time because C++ is statically scoped. 
+c) The maximum length of a string literal is 65,535 bytes and is defined by the language (https://docs.microsoft.com/en-us/cpp/cpp/string-and-character-literals-cpp?view=vs-2019)
+d) Reference environments are passed at run-time
+e) The address of a library function is known when the program is loaded into memory
+f) The space occupied by the code is known after load time because at that point, all of the source code is stored in memory. The data is not known until the program has run fully because the program can generate large amounts of data and may write data to a file nondeterministically..
+
+2 Answer:
+
+a) 
+
+========================
+return value: 1
+arguments: 0, base
+return address: addr of powF function
+control link: addr of n-1st call
+local variables: N/A
+========================
+return value: base * 1
+arguments: 0, base
+return address: addr of powF function
+control link: addr of n-2nd call
+local variables: N/A
+========================
+...
+========================
+return value: (base^(n-2)) * 1
+arguments: pow = n-2, base
+return address: addr of powF function
+control link: addr of 2nd call
+local variables: N/A
+========================
+return value: (base^(n-1)) * 1
+arguments: pow = n-1, base
+return address: addr of powF function
+control link: addr of 1st call
+local variables: N/A
+========================
+return value: (base^n) * 1
+arguments: pow = n, base
+return address: addr of main
+control link: addr of main
+local variables: N/A
+========================
+
+b) The program stack grows towards lower addresses.
+
+c) 
+
+https://sourceware.org/binutils/docs/as/CFI-directives.html
+
+	.file	"powF.c"
+	.text
+	.globl	powF
+	.type	powF, @function
+powF:
+.LFB0:
+	.cfi_startproc 
+	pushq	%rbp -- Write: pushes return value onto the stack
+	.cfi_def_cfa_offset 16 -- Offset is being set to 16
+	.cfi_offset 6, -16 -- Previous register is saved at offset of -16
+	movq	%rsp, %rbp -- Write: sets the base pointer to the stack pointer
+	.cfi_def_cfa_register 6 -- Sets 6 as the register to use
+	subq	$16, %rsp -- Create: allocates 16 bytes for the stack
+	movl	%edi, -4(%rbp) -- Write: moves pow onto stack
+	movl	%esi, -8(%rbp) -- Write: moves base onto stack
+	cmpl	$0, -4(%rbp) -- check to see if(0==pow)
+	jne	.L2 -- recursive case, calls powF(pow-1, base)
+	movl	$1, %eax -- base case, puts 1 into return register
+	jmp	.L3 -- returns from powF
+.L2:
+	movl	-4(%rbp), %eax -- Write: moves pow into register %eax
+	leal	-1(%rax), %edx -- Write: loads the value of %rax into register %edx
+	movl	-8(%rbp), %eax -- Write: moves base into register %eax
+	movl	%eax, %esi -- Write: moves base into register %esi
+	movl	%edx, %edi -- Write: moves pow-1 into register %edi
+	call	powF -- call powF function
+	imull	-8(%rbp), %eax -- Write: multiplies return register %eax by powF(pow-1, base)
+.L3:
+	leave
+	.cfi_def_cfa 7, 8 -- Delete: Deallocates memory used on the stack
+	ret
+	.cfi_endproc -- end of function
+.LFE0:
+	.size	powF, .-powF
+	.ident	"GCC: (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0"
+	.section	.note.GNU-stack,"",@progbits
+
+3. Now compile powF.c to assembly code on your machine using the command "gcc -O2 -S powF.c". Compare the assembly file created using optimization switch, -O2, with the assembly file created without optimization(above #2). Pay attention to how powers's recursion is "implemented". How are they different?
+
+3 Answer: The non-optimized version of powF uses registers and the stack to perform computations for the recursive calls. This requires pushing and popping from the stack, value computation using registers, and deallocating the used memory. The optimized version of powF uses alignment (.p2align) to improve the performance of recursion. It begins by putting the base case into the return register and then checks if pow is equal to zero using testl. If it is, it jumps to .L1 where it returns, otherwise, it continues directly by aligning the code using .p2align. Finally, it continues to the recursive portion of the function (.L2) where the multiplication of values occurs.
+
+4. Many storage-management algorithms maintain a list of free blocks. Here are two different algorithms, first fit and best fit, used to search this list and return a block of the appropriate size. Which strategy, if either, will result in lower external fragmentation? What does external fragmentation depend on?
+
+4 Answer: The list of free blocks is a singly-linked list containing all the available blocks on the heap. Prior to memory allocation, the list of free blocks contains the entire memory in one block. When a process needs to allocate memory, the first fit algorithm returns the first block available to fit that request. On the other hand, the best fit algorithm returns the smallest block available to fulfil the request. Neither of the algorithms result in lower external fragmentation. External fragmentation depends on the distribution of size requests.
+
+5 Answer:	
+
+First Fit Complexity:	O(n) where n is the number of free blocks. This is because you need to traverse the entire list linearly to find a free block of the correct size.
+Speed Up Algorithm:	Using a Buddy Memory Allocation technique. This would divide larger blocks of memory into halves to better fit them into free blocks earlier, thus taking less time as less free blocks need to be traversed.
+Complexity with Speed Up:	After the speed up, the algorithm would run in constant time because open space could be found almost immediately.
+
+https://en.wikipedia.org/wiki/Buddy_memory_allocation
+
+6 Answer:
+
+#4:	Lifetime:	Refers to the amount of time between an objects binding with a name and its destruction/freeing from binding. Includes any time the objects binding is in and out of scope.
+	Visibility:	Refers to the scope that an object can be used in, can change at different parts of the program.
+	
+#12:	The scope of a name-to-object binding is the part of the program where the binding does not change (e.g. binding is active/visible).
+	
+3.4:	1.) In C++, when execution is outside the method of a class, private variables are live but are not in the scope.
+	2.) In C, when execution is out of a function in which a static variable was declared, the variable is live but is not in the scope.
+	3.) As with C++, in Java, when execution is outside the method of a class, private variables are live but not in the scope.
+
+
