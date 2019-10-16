@@ -2,7 +2,7 @@
 # 
 
 def foo(x)
-#	y = 2
+	y = 2
 
 # Proc
 # Proc objects are blocks of code that have been bound to a set of local variables. 
