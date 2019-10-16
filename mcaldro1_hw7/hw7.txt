@@ -1,0 +1,210 @@
+Cameron Viezel
+Mark Caldropoli
+Jasper Suhr
+
+1:
+
+x : integer --global
+
+procedure set_x(n : integer)
+	x := n
+
+procedure_print_x()
+	write_integer(x)
+
+procedure first()
+	set_x(1)
+	print_x()
+
+procedure second()
+	x : integer
+	set_x(2)
+	print_x()
+
+set_x(0)
+first()
+print_x()
+second()
+print_x()
+
+What does this program print if the language uses static scoping? What does it print with dynamic scoping? Why?
+
+1 Answer:
+
+static scoping:
+1
+1
+2
+2
+
+set_x(0) -- sets the global x variable to 0
+first() -- calls set_x(1) which sets the global x variable to 1. calls print_x() which prints the global variable x which has a value of 1
+print_x() -- prints the global variable x which is currently set to 1
+second() -- initializes a local variable x. calls set_x(2), since static scoping is used, set_x(2) will set the global variable x to 2 because it has no reference to the local variable. print_x() will print 2
+print_x() -- prints the global variable x which is currently set to 2
+
+
+dynamic scoping:
+1
+1
+2
+1
+
+set_x(0) -- sets the global x variable to 0
+first() -- calls set_x(1) which sets the global x variable to 1. calls print_x() which prints the global variable x which has a value of 1
+print_x() -- prints the global variable x which is currently set to 1
+second() -- initializes a local variable x. calls set_x(2), since dynamic scoping is used, set_x(2) will set the local variable x to 2. print_x() refers to the local variable x which has a value of 2.
+print_x() -- the local variable x is no longer bound because its lifetime is the procedure second(). The global variable x will be printed which currently has a value of 1
+print_x()
+
+2: As noted in Section 3.6.3, C# has unusually sophisticated support for firstclass subroutines. Among other things, it allows delegates to be instantiated
+from anonymous nested methods, and gives local variables and parameters
+unlimited extent when they may be needed by such a delegate. Consider the
+implications of these features in the following C# program:
+
+	using System;
+	public delegate int UnaryOp(int n);
+	// type declaration: UnaryOp is a function from ints to ints
+	
+	public class Foo {
+		static int a = 2;
+		static UnaryOp b(int c) {
+			int d = a + c;
+			Console.WriteLine(d);
+			return delegate(int n) { return c + n; };
+		}
+		public static void Main(string[] args) {
+			Console.WriteLine(b(3)(4));
+		}
+	}
+
+What does this program print? Which of a, b, c, and d, if any, is likely to be
+statically allocated? Which could be allocated on the stack? Which would
+need to be allocated in the heap? Explain.
+
+2 Answer:
+
+The program prints:
+5
+7
+
+a is statically allocated
+b is statically allocated
+c is allocated on the heap because the delegate needs access to c. 
+d is allocated on the stack because it is only used in UnaryOp
+
+3: What are two principal tradeoffs between reference counts and tracing strategy used in garbage collecting?
+
+3 Answer:
+
+Reference counting is a garbage collecting method where once an object has no references it will immediately be deallocated. This garbage collecting mechanism is simple, but one big flaw is that objects cannot have circular references or the objects will never be deallocated because the two objects will always have references to one another and their reference counts will never hit 0.
+
+Tracing is a garbage collection mechanism where the heap is traced to find objects that are no longer reachable. Unlike reference counting, tracing allows for objects with circular references to be deleted. One drawback of tracing is that it is usually nondeterministic, so the programmer has no way of knowing when an object is actually being deallocated, whereas this process is very clear in reference counting.
+
+4: Consider the following pseudocode:
+
+   x : integer := 1
+   y : integer := 20
+   procedure add()
+         x := x + y
+   procedure second(P : procedure)
+         x : integer := 2
+         P()
+   procedure first()
+         y : integer := 3
+         second(add)
+
+   first()
+   write integer(x)
+
+a. What does this program print if the language uses static scoping?
+b. Explain why 4 is printed out if the language uses dynamic scoping with deep binding.
+c. Explain why 1 is printed out if the language uses dynamic scoping with shallow binding.
+
+4 Answer:
+
+a) The program will print 21 if the language uses static scoping.
+b) 4 is printed when the language uses dynamic scoping with deep binding because x = 1 and y = 3 when add() gets passed to second(). These are the values of the variables because the environment is bound to the function.
+c) 1 is printed when the language uses dynamic scoping with shallow binding because function calls would take the environment of the prior function call.
+
+5: Page 768 exercise 14.11 - Run the following program in Perl:
+
+#!/usr/bin/perl
+# Problem 14.11
+
+# Run this code in Perl.
+# Rerun using--> use diagnostics; (remove "#" on the next line)
+# use diagnostics;
+
+# reference
+# http://www.computer-books.us/perl_0010.php
+
+
+# $ is used to denote a scalar value.
+# $_[0]  --- is the first parameter
+
+
+sub foo {
+	my $lex = $_[0];
+	sub bar {
+  		print "$lex\n";
+		$lex = 5;
+	};
+	print "Call to foo ";
+	print "$lex\n";
+	bar();
+}
+foo(2);
+foo(3);
+
+You may be surprised by the output. Perl 5 allows named subroutines to nest, but does not create closures for them properly. Rewrite the code above to create a reference to an anonymous local subroutine and verify that it does create closures correctly. Add the line use diagnostics; to the beginning of the original version and run it again. Based on the explanation this will give you, speculate as to how nested named subroutines are implemented in Perl 5.
+
+5 Answer:
+
+Based on the above, nested named subroutines must be implemented at compile time. The scope in which the subroutines are written must not be taken into consideration. In this case, any subroutine can be called in any scope and the variables within the subroutines are visible to all variables around it.
+
+6: Page 768 exercise 14.13 - This problem includes a snippet of Ruby code. Instead of the code in the book, please reference this version instead. Answers based on the original code in the book will lose points.
+
+#!/usr/bin/ruby
+#
+
+def foo(x)
+	y = 2
+
+# Proc
+# Proc objects are blocks of code that have been bound to a set of local variables.
+# Once bound, the code may be called in different contexts and still access those variables.
+# http://www.ruby-doc.org/core-2.1.3/Proc.html
+
+
+	bar = Proc.new {
+		print x, "\n"
+		y = 99
+	}
+	bar.call()
+	print y, "\n"
+end
+foo(3)
+
+6 Answer:
+
+The provided code outputs the following:
+
+3
+99
+
+First, it prints out 3, the variable passed into function foo when the Proc bar is called. Then, it prints out 99 because the Proc set y = 99 when it was called which replaces the y = 2 initialization at the beginning of foo.
+
+Then, when commenting out y = 2, the output is the following:
+
+3
+six.rb:18:in `foo': undefined local variable or method `y' for main:Object (NameError)
+	from six.rb:21:in `<main>'
+
+In this case, 3 is still printed out when the Proc bar is called because x is passed into foo as a parameter. However, the value for y cannot be printed out because y was never defined in the function foo. The Proc sets the value of y = 99 within the Proc but the scope of y ends when the call to Proc completes so no y is defined when the program reaches the print statement for y. Therefore, this confirms that in Ruby, the inner block can see the variables within the parent block but the parent block cannot access the variables within the child block.
+
+7: No, this is not a contradiction. Associativity tells us the order that different binary operators are applied within an expression, but does not define the order that the operands of a certain operator are evaluated.
+
+8: No, this statement will never be valid in C. Since & is the unary operator denoting the memory address of the operand, we cannot get the memory address of a memory address.
+
+9: While assignment may happen twice as often as equality testing, I do not think this a good rationale for making the operators "=" and "==". Instead, I think they chose the "==" operator because "=" was already used by previous programming languages for assignment, and "==" follows from the other equality operators "<, >, =<, =>". Thus it follows suite with other equality operators and implies an "equal to" relationship.
