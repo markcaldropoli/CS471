@@ -1,0 +1,163 @@
+Cameron Viezel
+Mark Caldropoli
+Jasper Suhr
+
+CS471: Programming Languages
+Homework 8
+
+1. Explain the difference between true iterators and iterator objects.
+
+1 Answer:
+
+True iterators use yield statements as placeholders to return data and then resume execution after the yield statement when called again. Iterator objects use objects where the state of the iterator is contained in the object itself. Iterator objects do not rely on yield statements.
+
+2. Evaluate following program fragment in C:
+int a = 0;      
+int b = (a++ && ++a) > (a++ && a++);
+printf( "%d %d", a, b );
+
+2 Answer:
+
+a) L -> R
+
+int b = (a++ && ++a) > (a++ && a++); | a = 0, b = ?
+int b = (0 && ++a) > (a++ && a++); | a = 1, b = ?
+int b = 0 > (a++ && a++); | a = 1, b = ?
+int b = 0 > (1 && a++); | a = 2, b = ?
+int b = 0 > (1 && 2); | a = 3, b = ?
+int b = 0 > 1; | a = 3, b = ?
+int b = 0; | a = 3, b = 0
+
+b) L <- R
+
+int b = (a++ && ++a) > (a++ && a++); | a = 0, b = ?
+int b = (a++ && ++a) > (0 && a++); | a = 1, b = ?
+int b = (a++ && ++a) > 0; | a = 1, b = ?
+int b = (1 && ++a) > 0; | a = 2, b = ?
+int b = (1 && 3) > 0; | a = 3, b = ?
+int b = 1 > 0; | a = 3, b = ?
+int b = 1; | a = 3, b = 1
+
+3. C++ and Java loops are often written with empty bodies by placing all side effects into the tests, such as in the following two examples:
+
+i = 0;
+while (a[i++] != 0);
+
+for (i = 0; a[i] != 0; i++);
+
+Are these loops equivalent? Explain.
+
+3 Answer:
+
+The loops are equivalent if there is no body. The while loop will increment i in the 'while' expression, whereas the for loop will only increment i once the body of the for loop has been executed. If there is a body to the for and while loops, the while loop's body will start with a value of 1 whereas the for loop's body will start with a value of 0.
+
+4. Page 291 exercise 6.33
+ 
+4 Answer:
+In-Line Subroutine Faster than Macro: When using data that is being passed at runtime.
+Macro Faster than In-Line Subroutine: When using data that is being passed at compile time.
+
+5. Page 311/12 CYU 2, 9, 10
+ 
+5 Answer:
+CYU 2:	Strongly Typed: Each object must have a type, types are verified at runtime to see what kinds of operations are available to that object. If the type cannot perform the action you are trying to accomplish an error will occur.
+		Statically Typed: Types are checked at compile time. Compiler can assign the correct type to every expression statically.
+		Why C isn't Strongly Typed: C does not perform any type verification at runtime.
+
+CYU 9:	Polymorphism:	Things that have the same name but funciton differently depending on context and usage.
+		Parametric Variety:	Generically written functions and data structures where the type does not effect the code.
+		Subtype Variety:	Inherited functions and data structures from a super type. Based on context and usage the correct function is utilized at runtime.
+		Generics:	Something defined with general structure and logic so that it can be applied to a multitude of data types. (e.g. templates in Java)
+
+CYU 10:	Discrete:	Data types that can contain a multitude of values given that they are ordered and countable.
+		Scalar:	Data types that can only contain one value at a time.
+
+6. Page 312 CYU 5
+
+6 Answer:	Denotional:	Types are denoted as sets of values where a variable is of a type if it fits in the set that defines that type.
+			Constructive:	Types are a composition of either one or more simpler types that have been conglomerated or a built-in type.
+			Abstraction-Based:	Types are defined by the operations they have available to them and how these operations effect the program.
+ 
+7. Page 346 exercise 7.18
+
+7 Answer:	Similarity:	Simplify code by replacing certain operations. Can be inline expanded.
+			Templates Can Do, Macros Can't:	Use of recursive function calls. Capable of more than one expansion.
+			Macros Can Do, Templates Can't:	Macros take no extra time to compile while Templates do. Preporcessing can expand macro code.
+
+8. Here are some type and variable declarations in C syntax:
+
+    typedef char* String1; typedef char* String2:
+    String1 a;
+    String2 b, c;
+    String2 d;
+
+State which variables are type equivalent under(a) structural equivalence, (b) strict name equivalence, and (c) the actual C equivalence algorithm.     
+
+8 Answer:
+
+a) a = b = c = d
+b) a, b = c = d
+c) a = b = c = d
+
+9. Given the following C++ declaration,
+
+    double* dp = new double(3);
+    void* vp;
+    int* ip;
+which of the following assignments does the compiler complain about?
+
+    vp = dp;
+    dp = vp;
+    ip = dp;
+    dp = ip;
+    ip = vp;
+
+    ip = (int*) vp;
+    ip = static_cast<int*>(vp);
+    ip = static_cast<int*>(dp);
+    ip = reinterpret_cast<int*>(dp);
+ 
+Briefly explain the behavior of the compiler. Will *ip ever have the value 3 after one of the assignments to ip?
+
+9 Answer:
+
+The compiler complains about:
+dp = vp - error: invalid conversion from 'void*' to 'double*'
+ip = dp - error: cannot convert 'double*' to 'int*' in assignment
+dp = ip - error: cannot convert 'int*' to 'double*' in assignment
+ip = vp - error: invalid conversion from 'void*' to 'int*'
+ip = static_cast<int*>(dp) - error: invalid static_cast from type 'double*' to type 'int*'
+
+The behavior of the compiler is as follows:
+- Void pointers can be casted to other pointers
+- Some pointers cannot be converted to each other, such as double to int, because of precision
+
+*ip will not have the value 3. The only place where *ip can be 3 is at the reinterpret_cast. All other assignments are invalid. Although, reinterpret_cast would only work if it is possible to convert to another type and then convert it back to the original type.
+ 
+10. Page 405,exercise 8.12
+
+Consider the following C declaration, compiled on a 64-bit x86 machine:
+    struct {
+        int n;
+        char c;
+    } A[10][10];
+If the address of A[0][0] is 1000 (decimal), what is the address of A[3][7]?
+
+10 Answer:
+
+Address of A[3][7] = 1000 + ((3 * 7) * 4) = 1084.
+ 
+11. Page 407 exercise 8.16 (Reading C type declarations)
+
+Explain the meaning of the following C declarations:
+    a) double *a[n];
+    b) double (*b)[n];
+    c) double (*c[n])();
+    d) double (*d())[n];
+
+11 Answer:
+
+a) This declares an array of n pointers of double data type.
+b) This declares a pointer to an array of n pointers of double data type.
+c) This declares an array of n pointers to functions which return doubles.
+d) This declares a function which returns a pointer to an array of n doubles.
