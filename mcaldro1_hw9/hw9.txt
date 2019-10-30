@@ -1,0 +1,187 @@
+Cameron Viezel
+Jasper Suhr
+Mark Caldropoli
+
+1. page 465 exercise 9.15 (Consider the following declaration in C:
+
+double(*foo(double (*)(double, double[]), double)) (double, ...)
+
+1 Answer: foo is a function which takes two arguments: 1. (a function pointer with arguments of double and a double array) and 2. a double. 
+
+2. Suppose this C++ code:
+
+const int k = ???; // you need to figure out the value of ???
+int * i = 0;
+struct A {
+    int x[k];
+};
+A* a = 0;
+printf( "%d  %d  %d %d  %d  %d  ",
+         i+1, i+k, k, a+k, &(a[9]), &(a[9]) - (a+1)  );
+
+2 Answer: 
+
+4 12 3 36 8 1388316752
+
+4: i is a pointer so incrementing it by 1 will add an offset to the address of 4 because ints are 4 bytes in size. When this address is coerced to an int it yields 4.
+12: same logic as above, i + k is incrementing the pointer 3 times, and 4 + 4 + 4 = 12, so an offset of 12 is added. When this address is coerced to an int it yields 12.
+3: k needs to be set to 3 in order for the other outputs to match up correctly due to the pointer arithmetic.
+36: a has a size of 12 bytes, so incrementing a 3 times yields 36 when this address coerced to an int.
+8: addresses are 8 bytes.
+1388316752: &(a[9]) and (a+1) both get coerced to ints, so subtracting them yields random values due to this arithmetic.
+
+3. Consider the following function/macro definition in C:
+
+#define SQUARE(x) x*x
+
+ int squareF(int x) {
+      return x * x;
+ }
+
+3 Answer:
+
+a) 9
+b) 9
+c) 
+int a = 3;
+int ans1 = squareF(a++);
+a = 3;
+int ans2 = SQUARE(a++);
+printf("%d %d\n", ans1, ans2); //ans1 = 9, ans2 = 12. The function will increment a after 3 has been passed into x which means that it will still evaluate as 3*3 = 9. The macro will substitute a++ into both x's. The first will evaluate as 3 and the second will evaluate as 4, and 3*4 = 12.
+
+4. Consider the following code snippet in C-like syntax:
+int A[4];
+
+int runit(){
+   i = 0;
+   A[0] = 2;
+   A[1] = 1;
+   A[2] = 0;
+   A[3] = 2;
+   mys(i,a[i]);
+   print(i, a[0], a[1], a[2],a[3]);
+   mys(a[1],a[i]);
+   print(i, a[0], a[1], a[2],a[3]);
+   return 0;
+}
+void mys(int x, int y){
+   x = x + y;
+   y = x - y;
+   x = x - y;
+}
+
+What is the printout of runit() assuming each of the following parameter-passing mechanisms. Show how you determined the answer. There may be more than one correct answer.
+A. By value.
+B. By reference.
+C. By value-result.
+D. By macro expansion.
+E. By name.
+
+4 Answer:
+
+A) By value.
+
+Pass by value calls the inner functions which don't modify the global variables.
+
+1st Call:
+0 2 1 0 2
+
+2nd Call:
+0 2 1 0 2
+
+B) By reference.
+
+1st Call - Pass in i = 0 and a[i] = a[0] = 2.
+i = 0 + 2 => 2
+a[0] = 2 - 2 => 0
+i = 2 - 0 => 2
+So, i = 2 and a[0] = 0.
+2 0 1 0 2
+
+2nd Call - Pass in a[1] = 1 and a[i] = a[2] = 0.
+a[1] = 1 + 0 => 1
+a[2] = 1 - 0 => 1
+a[1] = 1 - 1 => 0
+So, a[1] = 0 and a[2] = 1.
+2 0 0 1 2
+
+C) By value-result.
+
+Uses in-out, passes by value but modifies the original.
+
+1st Call - Pass in i = 0 and a[i] = a[0] = 2.
+temp i    = 0 + 2 => 2
+temp a[0] = 2 - 2 => 0
+temp i    = 2 - 0 => 2
+So, i = 2 and a[0] = 0.
+2 0 1 0 2
+
+2nd Call - Pass in a[1] = 1 and a[i] = a[0] = 2.
+temp a[1] = 1 + 0 => 1
+temp a[2] = 1 - 0 => 1
+temp a[1] = 1 - 1 => 0
+So, a[1] = temp a[1] and a[2] = temp a[2].
+2 0 0 1 2
+
+D) By macro expansion.
+
+1st Call - Pass in i = 0 and a[i] = a[0] = 2.
+mys(i, a[i]) =>
+    i = i + a[i];    | i = 0 + a[0]    | i = 0 + 2 => 2
+    a[i] = i - a[i]; | a[2] = 2 - a[2] | a[2] = 2 - 0 => 2
+    i = i - a[i];    | i = 2 - a[2]    | i = 2 - 2 = 0
+So, i = 0 and a[2] = 2.
+0 2 1 2 2
+
+2nd Call - Pass in a[1] = 1 and a[0] = 2.
+mys(a[1],a[i]) =>
+    a[1] = a[1] + a[i]; | a[1] = a[1] + a[0] | a[1] = 1 + 2 => 3
+    a[i] = a[1] - a[i]; | a[0] = a[1] - a[0] | a[0] = 3 - 2 => 1
+    a[1] = a[1] - a[i]; | a[1] = a[1] - a[0] | a[1] = 3 - 1 => 2
+So, a[0] = 1 and a[1] = 2.
+0 1 2 2 2
+
+E) By name.
+
+1st Call - Pass in i = 0 and a[0] = 2.
+i = i + a[i]    | i = 0 + a[0]    | i = 0 + 2 => 2
+a[i] = i - a[i] | a[2] = 2 - a[2] | a[2] = 2 - 0 => 2
+i = i - a[i]    | i = 2 - a[2]    | i = 2 - 2 => 0
+So, i = 0 and a[2] = 2.
+0 2 1 2 2
+
+2nd Call - Pass in a[1] = 1 and a[0] = 2.
+a[1] = a[1] + a[i] | a[1] = a[1] + a[0] | a[1] = 1 + 2 => 3
+a[i] = a[1] - a[i] | a[0] = a[1] - a[0] | a[0] = 3 - 2 => 1
+a[1] = a[1] - a[i] | a[1] = a[1] - a[0] | a[1] = 3 - 1 => 2
+So, a[0] = 1 and a[1] = 2.
+0 1 2 2 2
+
+5. CYU page 523 CYU 42 and 45.
+    42. What is mix-in inheritance? What problem does it solve?
+
+    45. What does true multiple inheritance make possible that mix-in inheritance does not?
+
+5 Answer:
+
+42) Mix-in inheritance is a method which allows the programmer to define the interface that a class must provide in order for its objects to be used in certain contexts. Additionally, as long a class only inherits from one parent, it can mix in an arbitrary number of interfaces.
+
+Mix-in inheritance solves the problem of multiple inheritance which is knowing which parent will be called. Also, mix-in inheritance is useful for code reusability when a programmer wants to share functionality between various classes.
+
+45) True multiple inheritance allows classes to inherit real functionality from more than one base class whereas mix-in inheritance only allows a class to inherit from one real parent.
+
+6. page 527 exercise 10.16  (What happens to the implementation of a class if we redefine a...)
+
+6 Answer: Nothing happens in terms of errors in the code as this would not throw an error. In functionality, bar can have 2 different b fields, one relating to class foo and the other relating to class bar. In order to access the variable b in bar, we would use x.b where x is a bar object. In order to access the variable b in foo, we would use x.foo::b where x is a bar object. The :: operator is the scope resolution operator.
+
+7. page 527 exercise 10.20. (If foo is an abstract class in C++...) In addition, explain why this isn't an issue for Java.
+
+7 Answer: You cannot create an instance of an abstract class. In the case where foo is a variable, we are creating an object of an abstract class which is not possible. If foo is a pointer, then we are creating a pointer to foo's derived class which is valid. This is because of the polymorphic properties of C++ pointers.
+
+8. page 526 exercise 10.14 (Compare Java final with C++ non-virtual...)
+
+8 Answer: 
+
+Similarities: A C++ non-virtual method acts as a Java final method. Neither require indirection. Both are either resolved (C++ non-virtual) or bound (Java final) at compile time. 
+
+Differences: Java final methods cannot be overriden by a derived class, C++ non-virtual methods can. Java final methods can be replaced with the inline functions by the compiler, C++ non-virtual methods cannot be inline. C++ assumes every ethod is non-virtual by default, Java final methods must use the final keyword.
