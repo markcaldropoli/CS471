@@ -1,0 +1,377 @@
+MARK CALDROPOLI
+Haskell Assignment 1:
+Due Tuesday Nov 12 at 11:59pm.
+You must use the literal haskell format (.lhs). Name your file "Hw10.lhs".
+Most problems have questions - you can answer these in a separate text file ("hw10.txt") or as comments in Hw10.lhs next to the corresponding code.
+As usual, all files should be wrapped in a tar.gz directory with your bmail name e.g. "eway1_Hw10.tar.gz".
+
+(Additional Homework Problems: Do the problems in the linked file after you finish lab.
+
+ 
+1. [0pts] Using interactive Haskell. 
+
+    A. GHCi can be opened on the terminal with
+            $ ghci
+        
+        There may also be a version with a slightly improved gui available, but it wasn't installed when I last checked.
+        
+          a. Opening ghci will give you a prompt like:
+                GHCi, version 8.0.2:
+                http://www.haskell.org/ghc/  :? for help
+                Prelude>
+                
+          b. Online documentation for the GHC:
+             http://www.haskell.org/haskellwiki/GHC/GHCi
+             http://www.haskell.org/ghc/docs/latest/html/users_guide/
+             http://www.haskell.org/hoogle/
+             
+    B. Interactive commands are available at the prompt.  For the most part, it doesn't matter whether you're using GHCi or Hugs.
+       The most useful will be:
+           Prelude> :? --List available commands.
+           Prelude> :l MyFile.lhs --Load a file. This supports tab-completion so you don't have to type out the whole file name.
+           Prelude> :r --Reload the last loaded file, if you've edited it somewhere else.
+           Prelude> :e --Open a text editor. Not supported in Hugs.
+           Prelude> :!ls -- :! runs shell commands
+           Prelude> :!pwd
+           Prelude> :cd CS471 --:!cd won't work; you need to use :cd.
+           Prelude> :t factorial --Get the type of an expression.
+           
+    C. At the prompt type any numerical expressions.
+           Prelude> 3 + 4
+           Prelude> sqrt(25)
+           Prelude> (+) 3 4 --Infix operator as prefix.
+           Prelude> div 10 3
+           Prelude> 10 `div` 3 --Prefix operator as infix.
+           Prelude> (-) 2 5
+           Prelude> (2 - ) 5 --Currying.
+
+Alternation, types, set of types (Classes), type inference and specifing types
+
+PART 2
+
+2. Create a Haskell script file using your favorite editor.  We are going to create a program/script using the literal style of coding. Each line of code will begin with "> ". DO NOT MIX TABS AND SPACES. Lines with comments can begin with any character except ">".  
+    a. The first 2 lines of the file should be:
+    
+            > module Hw10
+            >     where
+            
+        Notice there is a space between ">" and module,  the identifier "Hw10" begins with a capital. There can be 1 or more spaces between ">" and where.
+        
+    b. Line 3 should be a blank line. Enter the following comment on line 4.  The comment can start in column 1.
+    
+        Define factorial. Let Haskell infer the type of factorial.
+        
+    c. Enter another blank line. Type the following 1 line definition of factorial.  Remember "=" means defined as and "==" is the equals operator. This code uses a if expression.  What is the difference between an if statement and an if expression? 
+    
+        > factorial n = if n == 0 then 1 else n * factorial (n - 1)
+        
+    d. Save text in a file named "Hw10.lhs".  Notice the name matches the module name. 
+    
+    e. Make sure you are in the folder with "Hw10.lhs" and open Hugs or GHCi. At the prompt type:
+    
+        ....> :l Hw10.lhs
+        
+       Notice the prompt will change to the name of the module
+            Hw10>
+
+    f. At the prompt type the expression
+    
+            Hw10> factorial 5
+            
+        What do you see?  What is the inferred type of factorial?  (At the prompt type :t factorial).
+
+3. [0pts] Open "Hw10.lhs" in an editor. One way is to type ":e" at the prompt and an editor should open. The symbol/operator "::" means has type. Add the following definitions to the file (Lines 7 -10). (Line 7) tells Haskell the type of the fact1,
+
+                > fact1 :: Int -> Int
+                > fact1 n = if n == 0 then 1 else n * fact1 (n - 1)
+                > fact2 :: Integer -> Integer
+                > fact2 n = if n == 0 then 1 else n * fact2 (n - 1)
+                
+        Save and reload the script. (:r). 
+
+4. Lets run some experiments. At the prompt type these expressions:
+
+        Hw10> factorial 12
+        Hw10> fact1 12
+        Hw10> fact2 12
+        Hw10> factorial 13
+        Hw10> fact1 13
+        Hw10> fact2 13
+        Hw10> factorial 500
+        Hw10> fact1 500
+        Hw10> fact2 500
+        
+        What happens and why?
+
+4 Answer.
+
+factorial 12 --> 479001600
+fact1 12     --> 479001600
+fact2 12     --> 479001600
+factorial 13 --> 6227020800
+fact1 13     --> 6227020800
+fact2 13     --> 6227020800
+factorial 500 --> 1220136825991110068701238785423046926253574342803192842192413588385845373153881997605496447502203281863013616477148203584163378722078177200480785205159329285477907571939330603772960859086270429174547882424912726344305670173270769461062802310452644218878789465754777149863494367781037644274033827365397471386477878495438489595537537990423241061271326984327745715546309977202781014561081188373709531016356324432987029563896628911658974769572087926928871281780070265174507768410719624390394322536422605234945850129918571501248706961568141625359056693423813008856249246891564126775654481886506593847951775360894005745238940335798476363944905313062323749066445048824665075946735862074637925184200459369692981022263971952597190945217823331756934581508552332820762820023402626907898342451712006207714640979456116127629145951237229913340169552363850942885592018727433795173014586357570828355780158735432768888680120399882384702151467605445407663535984174430480128938313896881639487469658817504506926365338175055478128640000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+fact1 500 --> 0
+fact2 500 --> 1220136825991110068701238785423046926253574342803192842192413588385845373153881997605496447502203281863013616477148203584163378722078177200480785205159329285477907571939330603772960859086270429174547882424912726344305670173270769461062802310452644218878789465754777149863494367781037644274033827365397471386477878495438489595537537990423241061271326984327745715546309977202781014561081188373709531016356324432987029563896628911658974769572087926928871281780070265174507768410719624390394322536422605234945850129918571501248706961568141625359056693423813008856249246891564126775654481886506593847951775360894005745238940335798476363944905313062323749066445048824665075946735862074637925184200459369692981022263971952597190945217823331756934581508552332820762820023402626907898342451712006207714640979456116127629145951237229913340169552363850942885592018727433795173014586357570828355780158735432768888680120399882384702151467605445407663535984174430480128938313896881639487469658817504506926365338175055478128640000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+
+All 3 definitions of factorial (factorial, fact1, and fact2) produce the same output when calling the definition using 12 or 13. When 500 is used in the expression to call the definitions, factorial and fact2 print out the correct value that is intended whereas fact1 prints 0. This is because the type of fact1 is Int -> Int and Int can only represent integers in a finite range of -2^29 to (2^29 - 1). On the other hand, Integer can represent arbitrarily long integers, only constrained by the storage on the machine.
+
+5. Lets runs some experiments.  At this point you may not understand the inferred types. At the prompt type the following commands:
+
+        :t fact1
+        :t fact1 5
+        :t (*)
+        :t (==)
+        :t 5
+        :t 5.1
+        :t 5::Int
+        :t factorial
+        :t factorial 5
+        :t (-)
+        :t (2-)
+        :t (-) 2
+        :t error
+        
+        "Num a" --- Num is a set of types and a may be any one of the types in that set.  Types that belong to Num are Int, Integer, Float and others including user defined types.  Haskell calls these sets  --CLASSES--  At the prompt type the following expressions:
+            Hw10> factorial (-2)
+        What happens and why?
+        At the prompt type the following expressions:
+            Hw10> factorial -2
+        What happens?
+
+5 Answer.
+
+:t fact1        --> fact1 :: Int -> Int
+:t fact1 5      --> fact1 5 :: Int
+:t (*)          --> (*) :: Num a => a -> a -> a
+:t (==)         --> (==) :: Eq a => a -> a -> Bool
+:t 5            --> 5 :: Num p => p
+:t 5.1          --> 5.1 :: Fractional p => p
+:t 5::Int       --> 5::Int :: Int
+:t factorial    --> factorial :: (Eq p, Num p) => p -> p
+:t factorial 5  --> factorial 5 :: (Eq p, Num p) => p
+:t (-)          --> (-) :: Num a => a -> a -> a
+:t (2-)         --> (2-) :: Num a => a -> a
+:t (-) 2        --> (-) 2 :: Num a => a -> a
+:t error        --> error :: [Char] -> a
+
+Typing factorial (-2) gives *** Exception: stack overflow. This occurs because n in the factorial definition will never equal 0 and instead, keep calling the factorial function creating a deeper and deeper chain of thunks which causes the stack to overflow.
+
+Typing factorial -2 gives:
+<interactive>:2:1: error:
+    • Non type-variable argument in the constraint: Num (p -> p)
+      (Use FlexibleContexts to permit this)
+    • When checking the inferred type
+        it :: forall p. (Eq p, Num p, Num (p -> p)) => p -> p
+
+6. Edit "Hw10.lhs" again. Instead of using if expression, you will use pattern matching. Noticed that the first definition of factP has "0" instead of an variable. Add the following (lines 11-13):
+
+            > factP :: Integer -> Integer
+            > factP 0 = 1
+            > factP n = n * factP(n -1)
+            
+        Reload the module and test factP using 12, 13, and 500 as inputs.
+
+6 Answer.
+
+factP 12  --> 479001600
+factP 13  --> 6227020800
+factP 500 --> 1220136825991110068701238785423046926253574342803192842192413588385845373153881997605496447502203281863013616477148203584163378722078177200480785205159329285477907571939330603772960859086270429174547882424912726344305670173270769461062802310452644218878789465754777149863494367781037644274033827365397471386477878495438489595537537990423241061271326984327745715546309977202781014561081188373709531016356324432987029563896628911658974769572087926928871281780070265174507768410719624390394322536422605234945850129918571501248706961568141625359056693423813008856249246891564126775654481886506593847951775360894005745238940335798476363944905313062323749066445048824665075946735862074637925184200459369692981022263971952597190945217823331756934581508552332820762820023402626907898342451712006207714640979456116127629145951237229913340169552363850942885592018727433795173014586357570828355780158735432768888680120399882384702151467605445407663535984174430480128938313896881639487469658817504506926365338175055478128640000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+
+7. Edit "Hw10.lhs" again. Instead of using if expression, you will use guards. Notice the indentation (spaces between ">" the "|" (the guard)). In addition error will be used to catch negative input. Add the following (lines 14-17)
+
+            > factG x
+            >     | x < 0     = error "neg x"
+            >     | x == 0    = 1
+            >     | otherwise = x*factG(x-1)
+
+        Reload Hw10 and test factG. What happens when you type factG (-2)?
+
+7 Answer.
+
+factG 12  --> 479001600
+factG 13  --> 6227020800
+factG 500 --> 1220136825991110068701238785423046926253574342803192842192413588385845373153881997605496447502203281863013616477148203584163378722078177200480785205159329285477907571939330603772960859086270429174547882424912726344305670173270769461062802310452644218878789465754777149863494367781037644274033827365397471386477878495438489595537537990423241061271326984327745715546309977202781014561081188373709531016356324432987029563896628911658974769572087926928871281780070265174507768410719624390394322536422605234945850129918571501248706961568141625359056693423813008856249246891564126775654481886506593847951775360894005745238940335798476363944905313062323749066445048824665075946735862074637925184200459369692981022263971952597190945217823331756934581508552332820762820023402626907898342451712006207714640979456116127629145951237229913340169552363850942885592018727433795173014586357570828355780158735432768888680120399882384702151467605445407663535984174430480128938313896881639487469658817504506926365338175055478128640000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+factG (-2) -->
+*** Exception: neg x
+CallStack (from HasCallStack):
+  error, called at Hw10.lhs:15:21 in main:Hw10
+
+factG (-2) catches when the provided x value is less than 0 and prints out an exception displaying the callstack.
+ 
+8. Edit "Hw10.lhs" again. Add the following two definitions (lines 18-27).
+
+            > factG2 :: Integer -> Integer
+            > factG2 n
+            >     | n < 0     = error "neg n"
+            >     | n == 0    = 1
+            >     | otherwise = n * factG2 (n - 1)
+            > factE :: Integer -> Integer
+            > factE n
+            >     | n < 0     = error "neg n"
+            >     | n == 0    = 1
+            >     | otherwise = n * factE n - 1
+
+        At the prompt type these expressions:
+
+            Hw10> factorial 5.1
+            Hw10> factG 5.1
+            Hw10> factG2 5.1
+
+        What happens and why?
+
+        At the prompt type these expressions:
+
+            Hw10> factG2 5
+            Hw10> factE 5
+
+        What happens? Try to guess why factE behaves this way?
+
+8 Answer.
+
+factorial 5.1:
+*** Exception: stack overflow
+
+factG 5.1:
+*** Exception: neg x
+CallStack (from HasCallStack):
+  error, called at Hw10.lhs:15:21 in main:Hw10
+
+factG2 5.1:
+<interactive>:4:8: error:
+    • No instance for (Fractional Integer)
+        arising from the literal ‘5.1’
+    • In the first argument of ‘factG2’, namely ‘5.1’
+      In the expression: factG2 5.1
+      In an equation for ‘it’: it = factG2 5.1
+
+factorial will never equal the base case of 0 and so factorial keeps calling itself, creating a deeper and deeper chain of thunks which causes the stack to overflow. factG will result in an exception of neg x when it tries to evaluate -0.9 < 0. factG2 will result in an error because fractG2 was given a specific type of Integer -> Integer and 5.1 is a Fractional.
+
+factG2 5:
+120
+
+factE 5:
+*** Exception: stack overflow
+
+factE results in a stack overflow because there are no parenthesis around the n-1.It is interpreted as (factE n) - 1. Hence, factE keeps multiplying n to itself, leading to an overflow because it never reaches the base case. 
+
+Part 3  Functions of 1 variable -- Curried functions
+
+    - In the development of functional notations as a model of computation, it has been important to concentrate on functions of one variable
+    - Curry did considerable work in the area. The idea is often used today in mathematics.
+    - Reference: WIKI -- Currying
+
+        A. Edit "Hw10.lhs" again. Add a line with the comment, "TupleData Type", surrounded by a blank line. Add the following definition:
+
+            > prodT (a,b,c) = a * b * c
+            
+            Save and reload "Hw10.lhs". Evaluate the following expressions: prodT(2,3,4), prodT(2, -3, 4).  What is the inferredtype of prodT?
+
+3A Answer.
+
+prodT(2,3,4) --> 24
+prodT(2, -3, 4) --> -24
+:t prodT --> prodT :: Num a => (a, a, a) -> a
+
+B. Edit "Hw10.lhs" again. Add a line with the comment,"Curried functions", surrounded by a blank line (lines 32-34). Add the following definition (line 35):
+
+         1. > prodC a b c = a * b * c
+         
+         2. Save and reload "Hw10.lhs". Evaluate the following expressions: prodC 2 3 4. What is the inferred type of prodC?
+         (At the prompt type:  Hw10> :t prodC)
+
+3B Answer.
+
+prodC 2 3 4 --> 24
+:t prodC --> prodC :: Num a => a -> a -> a -> a
+
+C. Edit "Hw10.lhs" again. Add the following definition:
+
+        > prodCx :: Num a => a -> (a -> (a->a))
+        > prodCx a b c =a * b * c
+
+    Save and reload "Hw10". Evaluate the following expression: prodCx 2 3 4. 
+
+            At the prompt type:
+                Hw10> :t prodCx
+            to display the type inferred by Haskell. How does this compare to the inferred type of prodC?
+
+3C Answer.
+
+prodCx 2 3 4 --> 24
+:t prodCx --> prodCx :: Num a => a -> a -> a -> a
+
+The inferred type of prodC and prodCx are the same. The only difference is the name of the function prodC vs. prodCx.
+
+D. Edit "Hw10.lhs" again. Add the following definition:
+
+        > prodC1  = prodC 1
+        > prodC2  = prodC1 2
+        > prodC3  = prodC2 3
+        > prodC12 = prodC 1 2
+
+        Notice that each definition DOES NOT HAVE AN argument! Do you think this is legal or illegal? If the definition is legal, predict the type of each. Now save and reload to verify your hypothesis.
+
+3D Answer.
+
+:t prodC1   --> prodC1 :: Integer -> Integer -> Integer
+:t prodC2   --> prodC2 :: Integer -> Integer
+:t prodC3   --> prodC3 :: Integer
+:t prodC12  --> prodC12 :: Integer -> Integer
+
+E. Assuming the code added in D is legal evaluate the following expression:
+
+        Hw10> prodC 1 2 3
+        Hw10>prodC1 2 3
+        Hw10> prodC2 3
+        Hw10> prodC3
+        
+        prodC1, prodC2, prodC3 and prodC12 all include partially evalutated functions in their definitions. Can you write similar definitions using prodT? For example, are any of the following definitions legal?
+
+        > prodT1 = prodT 1
+        > prodT2 = prodT(1)
+        > prodT4 = prodT(1,2)
+        > prodT3 = prodT(1,x,y)
+
+3E Answer.
+
+prodC 1 2 3 --> 6
+prodC1 2 3  --> 6
+prodC2 3    --> 6
+prodC3      --> 6
+
+No, none of the above definitions are legal. You cannot write similar for prodT because the prodT definition requires a tuple and as a result, you cannot give partial definitions. Tuples require the exact number of arguments.
+
+F. As you can see -- so far -- we are doing a lot of function application. Numbers are just constant functions. After completing up to this point, you should be able to figure out the associativity (right or left) of function application. Which parenthesize expression is the definition of F G H? Is it F G H = F (G H) or is it F G H = (F G) H?
+
+3F Answer.
+
+The correct definition is F G H = (F G) H.
+
+Part 4 Composition: Composition is another way to "glue together" functions.
+(References: Composition of Functions: and Function Composition (a deeper discussion))
+
+A. Do this by hand -- Given:
+
+    f(x) =  3 - (x * 5)
+    g(x) = (x - 1) * 2
+
+    a) Let h be defined to be (f o g) (i.e h is f composed with g). What is the result of h(x)? Use the definition of f and g above. Remember (f o g) x is defined to be f(g(x)).
+    b) Let h2 be defined to be (g o f)? What is the result of h2(x)?
+    c) What is the value of h(2)?
+    d) What is the value of h2(2)?
+
+4A Answer.
+
+a) h(x)  = 3 - ((x - 1) * 2) * 5)
+b) h2(x) = ((3 - (x * 5)) - 1) * 2
+c) h(2)  = 3 - ((2 - 1) * 2) * 5   = -7
+d) h2(2) = ((3 - (2 * 5)) - 1) * 2 = -16
+ 
+B. Program h and h2 in Haskell
+Write a haskell definition of f, g, h, and h2. Use the composition operator (.) to define h and h2. Notice that composition operator returns a function and you do not need to include the argument x in your definition of h and h2. i.e. The left hand side of the definition for h (and h2) need only h =.....
+
+4B Answer.
+
+See Hw10.lhs file.
