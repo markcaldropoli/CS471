@@ -1,0 +1,149 @@
+MARK CALDROPOLI
+Homework Assignment 11
+Programming Languages
+CS471, Fall 2019
+Binghamton University
+Due Wed. Nov. 20,2019 @ midnight
+
+Lab/Homework 11
+Lab Problems:
+1. Given the following types, state (in one sentence for each) what they describe.
+
+    (A) Num a => a -> a -> a
+    Function that takes 2 arguments with type from Num and returns a value of the same type.
+
+    (B) Num a => a -> (a -> a)
+    Function that takes 1 argument with type from Num and a function that returns a value of the same type.
+
+    (D) Eq a => a -> a -> Bool
+    Function that takes 2 equations and returns a bool (True/False).
+
+    (E) (a -> b) -> [a] -> [b]
+    Function that takes 2 arguments:
+        - A function that takes a value of any type a and returns a value of any type b
+        - A list containing values of type a
+    and returns a list of values with any type b.
+
+    (F) (a -> b -> a) -> a -> [b] -> a
+    Function that takes 3 arguments:
+        - A function that takes a value of any type a and any type b and returns a value of any type a
+        - A value of type a
+        - A list containing values of type b
+    and returns a value of type a.
+
+    (G) (a -> a) -> a -> a
+    Function that takes 2 arguments:
+        - A function that takes a value of any type a and returns a value of the same type.
+        - A value of type a
+    and returns a value of type a.
+
+    (H) (b -> c) -> (a -> b) -> a -> c
+    Function that takes 3 arguments:
+        - A function that takes a value of any type b and returns a value of any type c
+        - A function that takes a value of any type a and returns a value of any type b
+        - A value of type a
+    and returns a value of any type c.
+
+    (I) (a -> Bool) -> [a] -> [a]
+    Function that takes 2 arguments:
+        - A function that takes a value of any type a and returns a bool (True/False)
+        - A list containing values of any type a
+    and returns a list of values with any type a.
+
+2. Given the following partially applied functions (all of which are valid) predict their type. Before jumping to :t, first check the type of the function un-applied. Then, try and figure out what the partially applied function must accept after the first argument is applied in order to type check.
+
+    For example,
+    :t (+)
+    Num a => a -> a -> a
+    Then, (+) 1 removes one of the arguments (since it returns a new function). In order to type check, I should "expect" another a.
+    :t (+) 1
+    Num a => a -> a
+
+    (A) (+) 1
+        (+) 1 :: Num a => a -> a
+
+    (B) (+) 1 2
+        (+) 1 2 :: Num a => a
+
+    (C) (.) (\x -> x * 2)
+        (.) (\x -> x * 2) :: Num c => (a -> c) -> a -> c
+
+    (D) (.) (\x -> x * 2) abs
+        (.) (\x -> x * 2) abs :: Num c => c -> c
+
+    (E) (.) (+)
+        (.) (+) :: Num a1 => (a2 -> a1) -> a2 -> a1 -> a1
+
+    (F) (.) (+) (\m -> 10 * m)
+        (.) (+) (\m -> 10 * m) :: Num a => a -> a -> a
+
+    (G) (.) (+) (\m -> 10 * m) 3
+        (.) (+) (\m -> 10 * m) 3 :: Num a => a -> a
+
+3. (from Thue-Morse Sequence)
+"In mathematics, the Thue-Morse sequence, or Prouhet-Thue-Morse sequence, is a binary sequence that begins:
+
+    0 01 0110 01101001 0110100110010110 01101001100101101001011001101001 ...
+
+    (if your sequence starts with one..)
+    1 10 1001 10010110 1001011001101001....
+
+    Characterization using bitwise negation
+
+The Thue–Morse sequence in the form given above, as a sequence of bits,
+can be defined recursively using the operation of bitwise negation. So, the
+first element is 0. Then once the first 2n elements have been specified,
+forming a string s, then the next 2n elements must form the bitwise negation of
+s. Now we have defined the first 2n+1 elements, and we recurse.
+
+Spelling out the first few steps in detail:
+
+    * We start with 0.
+    * The bitwise negation of 0 is 1.
+    * Combining these, the first 2 elements are 01.
+    * The bitwise negation of 01 is 10.
+    * Combining these, the first 4 elements are 0110.
+    * The bitwise negation of 0110 is 1001.
+    * Combining these, the first 8 elements are 01101001.
+    * And so on.
+So
+    * T0 = 0.
+    * T1 = 01."
+   
+Define a primitive recursive function 'thue' given the nth thue element returns
+the next thue element. The elements will be represented as a list of 0s and 1s.
+e.g.
+   Hw11> thue [0,1,1,0]
+   [0,1,1,0,1,0,0,1]
+
+See HW Answers.
+
+Homework Problems: Hw11F19.lhs
+
+Here is the information for problem 2 in the homework.
+"A common way to compute the square root is to use Newton's method of successive approximations. Newton's method says that whenever we have a guess y for the value of the square root of a number x, we can perform a simple manipulation to get a better guess (one closer to the actual square root) by averaging y with x/y. For example, we can compute the square root of 2 as follows. Suppose our initial guess is 1:
+
+Guess	    Quotient	            Average
+ 	 	 
+1	    2/1 = 2              (2+1)/2 = 1.5
+ 	 	 
+1.5	2/1.5 = 1.3333	    (1.3333+1.5)/2 = 1.4167
+ 	 	 
+1.4167	2/1.4167 = 1.4118   (1.4167+1.4118)/2 = 1.4142
+ 	 	 
+1.4142        ...                     ...
+
+Continuing this process, we obtain better and better approximations to the square root. (From Structure and Interpretation of Computer Programs by Abelson and Sussman).
+
+Using a spreadsheet or calculator apply Newton's method to find the square root of 144 using an initial guess of 1. How do you know when to stop? How many steps did it take you?
+
+Guess       Quotient        Average
+1           144             72.5
+72.5        1.986206897     37.24310345
+37.24310345 3.866487663     20.55479556
+20.55479556 7.005664426     13.78022999
+13.78022999 10.44975302     12.11499151
+12.11499151 11.88609995     12.00054573
+
+When to stop depends on the precision that you consider to be "near enough".
+As you can see above, in 6 steps we get to the value 12.00054573.
