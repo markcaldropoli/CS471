@@ -1,1 +1,2 @@
 # CS471
+Introduction to the design and implementation of programming languages: linguistic features for expressing algorithms; formal syntax specification; introduction to language semantics and parsing; declarative programming (functional and goal-driven); scripting languages; imperative programming (procedural and object-oriented); comparative design and implementation issues across languages and paradigms. Assignments emphasize languages such as Prolog, Haskell, Python, and Ruby.
