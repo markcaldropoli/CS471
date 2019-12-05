@@ -1,0 +1,48 @@
+Mark Caldropoli
+
+Part A
+1. (\x -> x) :: p -> p
+
+2a. 3
+2b. 8
+2c. <interactive>:5:1: error:
+    • No instance for (Show (Integer -> Integer -> Integer))
+        arising from a use of ‘print’
+        (maybe you haven't applied a function to enough arguments?)
+    • In a stmt of an interactive GHCi command: print it
+    The type is (\x -> x) (+) :: Num a => a -> a -> a if that is the intended value.
+2d. Identity of 5 3
+
+3a. 6
+3b. f(x) = x + x
+
+4a. 3
+4b. Identity of 3
+
+Part B
+1.1 hLen is not recursive because it doesn't call hLen in the lambda's definition, it just adds 1 to the value obtained from the function applied to the tail of the list if it is not empty or just returns 0 if the the list is empty.
+1.2 hLen is a higher order function because it takes a function as an argument. 
+1.3a 12
+1.3b 6
+
+hLen has nothing to do with sum or head, they are just functions that are being passed into hLen as an argument.
+
+2. 3
+
+3. myLength is a function which takes a list and returns the number of elements that the list contains. hLen is a function which takes a function and a list and returns 0 if the list is empty, or otherwise, 1 + the value obtained from the function argument applied to the tail of the list. 
+
+Part C
+1. hFact :: Integral a => (a -> a) -> a -> a
+2. 36
+3. 120. Yes, they are the same.
+
+Part D
+1. factorial' :: Integer -> Integer
+
+2a. fix :: (t -> t) -> t
+2b. The first function is doing f (fix f) whereas the second function is doing (f fix) f because of left associativity.
+
+3a. 720 
+3b. 720
+3c. 720
+3d. 720
